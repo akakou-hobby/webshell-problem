@@ -1,0 +1,69 @@
+version: '2'
+services:
+  web:
+    build: ./web
+    volumes: 
+      - ./web/src:/var/www/html
+      - ./data:/root
+    ports: 
+      - "80:80"
+    container_name: web
+    entrypoint: "docker-php-entrypoint"
+    command: >
+      bash -c "tcpdump -w /root/data.pcap &
+      apache2-foreground"
+  
+  api:
+    build: ./web
+    volumes: 
+      - ./api/src:/var/www/html
+    ports: 
+      - "8000:80"
+    container_name: api
+    entrypoint: "docker-php-entrypoint"
+    command: >
+      bash -c "apache2-foreground"
+
+  hacker:
+    build: ./web
+    volumes: 
+      - ./hacker/src:/var/www/html
+    ports: 
+      - "5000:80"
+    container_name: hacker
+    entrypoint: "docker-php-entrypoint"
+    command: >
+      bash -c "apache2-foreground"
+
+  bot1:
+    build: ./bot
+    volumes:
+      - ./bot/src:/root
+    command: "sh /root/run1.sh"
+    depends_on:
+      - web
+
+  bot2:
+    build: ./bot
+    volumes:
+      - ./bot/src:/root
+    command: "sh /root/run2.sh"
+    depends_on:
+      - web
+
+  bot3:
+    build: ./bot
+    volumes:
+      - ./bot/src:/root
+    command: "sh /root/run3.sh"
+    depends_on:
+      - web
+
+  bot4:
+    build: ./bot
+    volumes:
+      - ./bot/src:/root
+    command: "sh /root/run4.sh"
+    depends_on:
+      - web
+
